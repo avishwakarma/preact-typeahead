@@ -41,10 +41,12 @@ Available props and their default values
 |Prop|Details|Default Value|
 |----|-------|------------:|
 |url|URL to fetch data from the server|`null`|
+|params|Configuration object to api check example folder for more details| Check the example|
+|dataKey|Key in which the data is available|`data`|
 |data|Data for typeahead|`null`|
 |suggestAfter |Chars to wait till the suggestions|3|
 |maxItem|Maximum items to be selected|5|
-|displayProp|Proprty to display in chips or input|`title`|
+|displayKey|Key to display in chips or input|`title`|
 |onInput|onInput callback| function |
 |onSelect|onSelect callback| function |
 |hilightTerm|Highlight the matched term| `false` |
