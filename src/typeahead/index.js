@@ -28,8 +28,6 @@ import request from '../util/request';
  * Style definitions for the component
  */
 import './typeahead.scss';
-import PopupMenu from "../../Menu";
-
 
 /**
  * TypeAhead
