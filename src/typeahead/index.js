@@ -370,14 +370,6 @@ export default class TypeAhead extends Component {
       }
     });
 
-    // this._key_handler = this._handle_arrow_key.bind(this);
-    //
-    // if(filtered.length > 0) {
-    //   document.addEventListener('keyup', this._key_handler);
-    // }else {
-    //   document.removeEventListener('keyup', this._key_handler);
-    // }
-
     this.setState({
       filtered,
       showSuggestions: filtered.length > 0 ? true : false
@@ -423,7 +415,7 @@ export default class TypeAhead extends Component {
 
       case 'ArrowDown':
         event.preventDefault();
-        if(selectedIndex < this.state.filtered.length) {
+        if(selectedIndex < this.state.filtered.length-1) {
           selectedIndex++;
         }
 
