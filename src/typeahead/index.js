@@ -1,15 +1,15 @@
 /**
  * TypeAhead
- * 
+ *
  * Component to display Movie title in TypeAhead
- * 
- * 
+ *
+ *
  * Check README.md for props and configuration details
  */
 
 /**
  * h, Component from Preact
- * 
+ *
  * h is used as JSX function
  * Component is the class where its lifecyle is implemeted
  */
@@ -17,28 +17,29 @@ import {h, Component} from 'preact';
 
 /**
  * request
- * 
+ *
  * Request utility to make HTTP calls
  */
 import request from '../util/request';
 
 /**
  * typeahead.scss
- * 
+ *
  * Style definitions for the component
  */
 import './typeahead.scss';
+import PopupMenu from "../../Menu";
 
 
 /**
  * TypeAhead
- * 
+ *
  * Component TypeAhead
  */
 export default class TypeAhead extends Component {
   /**
    * state
-   * 
+   *
    * Initial state for the TypeAhead component
    */
   state = {
@@ -53,14 +54,14 @@ export default class TypeAhead extends Component {
 
   /**
    * input
-   * 
+   *
    * Holds the input element
    */
   input = null;
 
   /**
    * refDiv
-   * 
+   *
    * Holds the reference div
    * Used to calculate width for input element
    */
@@ -68,22 +69,22 @@ export default class TypeAhead extends Component {
 
   /**
    * suggestior
-   * 
+   *
    * Holds the suggestion container
    */
   suggestor = null;
 
   /**
    * _cache
-   * 
+   *
    * Local cache for already response
    */
   _cache = {};
-  
+
   /**
    * constructor
-   * @param  {...any} args 
-   * 
+   * @param  {...any} args
+   *
    * Consturctor for the TypeAhead component
    */
   constructor(...args) {
@@ -112,14 +113,14 @@ export default class TypeAhead extends Component {
 
   /**
    * hide
-   * 
+   *
    * Hide the TypeAhead suggestions
    */
   hide() {
     const {
       onHide = () => {}
     } = this.state;
-    
+
     this.setState({
       showSuggestions: false
     });
@@ -129,7 +130,7 @@ export default class TypeAhead extends Component {
 
   /**
    * focus
-   * 
+   *
    * Set the focus to input element
    */
   focus() {
@@ -142,9 +143,9 @@ export default class TypeAhead extends Component {
 
   /**
    * _width
-   * 
-   * @param {*} value 
-   * 
+   *
+   * @param {*} value
+   *
    * Set width of input element
    */
   _width(value) {
@@ -159,10 +160,10 @@ export default class TypeAhead extends Component {
 
   /**
    * _get_title
-   * 
-   * @param {*} text 
-   * @param {*} val 
-   * 
+   *
+   * @param {*} text
+   * @param {*} val
+   *
    * Higlight the matching string into the title
    */
   _get_title(text, val) {
@@ -172,10 +173,10 @@ export default class TypeAhead extends Component {
 
   /**
    * deboucne
-   * 
-   * @param {*} func 
-   * @param {*} delay 
-   * 
+   *
+   * @param {*} func
+   * @param {*} delay
+   *
    * Debounce the network call by 500ms
    */
   debounce(func, delay = 800) {
@@ -184,10 +185,10 @@ export default class TypeAhead extends Component {
 
   /**
    * throttle
-   * 
-   * @param {*} func 
-   * @param {*} limit 
-   * 
+   *
+   * @param {*} func
+   * @param {*} limit
+   *
    * Throttle the network call by 500ms
    */
   throttle(func, limit = 800) {
@@ -196,9 +197,9 @@ export default class TypeAhead extends Component {
 
   /**
    * onInput
-   * 
-   * @param {*} event 
-   * 
+   *
+   * @param {*} event
+   *
    * OnInput handler for input element
    */
   onInput(event) {
@@ -231,9 +232,9 @@ export default class TypeAhead extends Component {
 
   /**
    * _cache_key
-   * 
-   * @param {*} term 
-   * 
+   *
+   * @param {*} term
+   *
    * Generating cache key based on the input term
    */
   _cache_key(term) {
@@ -242,9 +243,9 @@ export default class TypeAhead extends Component {
 
   /**
    * _build_url
-   * 
-   * @param {*} term 
-   * 
+   *
+   * @param {*} term
+   *
    * Builds url from params
    */
   _build_url(term) {
@@ -275,9 +276,9 @@ export default class TypeAhead extends Component {
 
   /**
    * _fetch_data
-   * 
-   * @param {*} term 
-   * 
+   *
+   * @param {*} term
+   *
    * Fteches data from url
    */
   _fetch_data(term) {
@@ -293,7 +294,7 @@ export default class TypeAhead extends Component {
         request.abort();
         return this._filter_data(this._cache[_key], term);
       }
-      
+
       request.get(_url).then(_res => {
         if(dataKey && !Array.isArray(_res)) {
           _res = _res[dataKey];
@@ -314,10 +315,10 @@ export default class TypeAhead extends Component {
 
   /**
    * _filter_data
-   * 
-   * @param {*} data 
-   * @param {*} term 
-   * 
+   *
+   * @param {*} data
+   * @param {*} term
+   *
    * _filters fetched data
    */
   _filter_data(data, term) {
@@ -337,8 +338,8 @@ export default class TypeAhead extends Component {
     }
 
     data.forEach(item => {
-      if(item[displayKey].indexOf(term) !== -1) {
-        
+      if(item[displayKey].toLowerCase().indexOf(term.toLowerCase()) !== -1) {
+
         const _item = item;
 
         if(hilightTerm) {
@@ -356,14 +357,6 @@ export default class TypeAhead extends Component {
       }
     });
 
-    this._key_handler = this._handle_arrow_key.bind(this);
-
-    if(filtered.length > 0) {
-      document.addEventListener('keyup', this._key_handler);
-    }else {
-      document.removeEventListener('keyup', this._key_handler);
-    }
-
     this.setState({
       filtered,
       showSuggestions: filtered.length > 0 ? true : false
@@ -372,9 +365,9 @@ export default class TypeAhead extends Component {
 
   /**
    * _search
-   * 
-   * @param {*} term 
-   * 
+   *
+   * @param {*} term
+   *
    * Initiate the search
    */
   _search(term) {
@@ -397,18 +390,18 @@ export default class TypeAhead extends Component {
   }
 
   _handle_arrow_key(event) {
-    event.preventDefault();
-
     let {
       selectedIndex
-    } = this.state; 
+    } = this.state;
 
     switch (event.code) {
       case 'Enter':
+        event.preventDefault();
         this.select(this.state.filtered[selectedIndex]);
       break;
 
       case 'ArrowDown':
+        event.preventDefault();
         if(selectedIndex < this.state.filtered.length) {
           selectedIndex++;
         }
@@ -419,6 +412,7 @@ export default class TypeAhead extends Component {
       break;
 
       case 'ArrowUp':
+        event.preventDefault();
         if(selectedIndex > 0) {
           selectedIndex--;
         }
@@ -427,14 +421,18 @@ export default class TypeAhead extends Component {
           selectedIndex
         })
       break;
+      case 'Escape':
+        event.preventDefault();
+        this.hide();
+      break;
     }
   }
 
   /**
    * select
-   * 
-   * @param {*} item 
-   * 
+   *
+   * @param {*} item
+   *
    * Select the movie from TypeAhead suggestions
    */
   select(item) {
@@ -445,7 +443,7 @@ export default class TypeAhead extends Component {
       multiple = false,
       displayKey
     } = this.state;
-    
+
     max = parseInt(max);
 
     let selected = this.state.selected;
@@ -458,7 +456,7 @@ export default class TypeAhead extends Component {
     }
 
     this.input.focus();
-    
+
     this.setState({
       selected,
       showSuggestions: false
@@ -473,9 +471,9 @@ export default class TypeAhead extends Component {
 
   /**
    * remove
-   * 
-   * @param {*} index 
-   * 
+   *
+   * @param {*} index
+   *
    * remove the selected items
    */
   remove(index) {
@@ -485,12 +483,12 @@ export default class TypeAhead extends Component {
 
     const selected = this.state.selected;
     selected.splice(index, 1);
-    
+
     this.setState({
       selected,
       empty: selected.length === 0 && this.input.value === '' ? true : false
     });
-    
+
     max = parseInt(max);
 
     if(max > this.state.selected.length) {
@@ -512,10 +510,10 @@ export default class TypeAhead extends Component {
 
   /**
    * render
-   * 
+   *
    * Component's render method
    */
-  render() {
+  render(props) {
     const {
       itemBuilder = this._item_builder.bind(this),
       displayKey = 'title',
@@ -523,21 +521,23 @@ export default class TypeAhead extends Component {
       selectedIndex
     } = this.state;
 
+    this._key_handler = this._handle_arrow_key.bind(this);
+
     return (
-      <div className={`__type_head ${this.state.showSuggestions ? '__show_suggestions': ''}`} onClick={this.focus.bind(this)}>
+      <div className={`__type_head ${this.state.showSuggestions ? '__show_suggestions': ''}`} onClick={this.focus.bind(this)} onKeyUp={this._key_handler}>
         <div className={`__input ${multiple ? '__multiple': '__single'}`}>
           <div className="__hidden" ref={node => this.refDiv = node}>{this.state.value}</div>
-          <div className={`__tags ${this.state.empty && this.state.selected.length === 0 ? '__null': ''}`} placeholder="Type movie title to search">
+          <div className={`__tags ${this.state.empty && this.state.selected.length === 0 ? '__null': ''}`} placeholder={props.placeholder}>
             {this.state.selected.length === 0 && multiple && <span className="empty">&nbsp;</span>}
             {multiple && this.state.selected.map((data, index) => {
-              return <span>{data[displayKey]} <span className="__remove" onClick={this.remove.bind(this, index)}>&#10005;</span></span> 
+              return <span>{data[displayKey]} <span className="__remove" onClick={this.remove.bind(this, index)}>&#10005;</span></span>
             })}
             <input type="text" style={{width: this.state.width}} onInput={this.onInput.bind(this)} ref={input => this.input = input} />
           </div>
         </div>
         <div className="__overlay" onClick={this.hide.bind(this)}></div>
         <div className="__suggestions" ref={node => this.suggestor = node}>
-          <ul className="__list">
+          <ul className="__list p-0">
             {this.state.filtered.map((item, index) => {
               return <li className={`${selectedIndex === index ? '__active': ''}`} onClick={this.select.bind(this, item)}>{itemBuilder(item)}</li>
             })}
@@ -547,3 +547,7 @@ export default class TypeAhead extends Component {
     )
   }
 }
+
+TypeAhead.defaultProps = {
+  placeholder : 'Type movie title to search',
+};
