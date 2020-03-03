@@ -52,6 +52,8 @@ export default class TypeAhead extends Component {
     selectedIndex: 0
   }
 
+  elementReferences = {}
+
   /**
    * input
    *
@@ -108,6 +110,17 @@ export default class TypeAhead extends Component {
 
     if(!this.state.multiple) {
       this.state.width = '100%';
+    }
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    const { selectedIndex } = this.state
+    const componentLostFocus = selectedIndex === null
+    const focusedChanged = prevState.selectedIndex !== selectedIndex
+    const focusDifferentElement = focusedChanged && !componentLostFocus
+
+    if (focusDifferentElement) {
+      this.elementReferences[selectedIndex].focus();
     }
   }
 
@@ -357,6 +370,14 @@ export default class TypeAhead extends Component {
       }
     });
 
+    // this._key_handler = this._handle_arrow_key.bind(this);
+    //
+    // if(filtered.length > 0) {
+    //   document.addEventListener('keyup', this._key_handler);
+    // }else {
+    //   document.removeEventListener('keyup', this._key_handler);
+    // }
+
     this.setState({
       filtered,
       showSuggestions: filtered.length > 0 ? true : false
@@ -539,7 +560,7 @@ export default class TypeAhead extends Component {
         <div className="__suggestions" ref={node => this.suggestor = node}>
           <ul className="__list p-0">
             {this.state.filtered.map((item, index) => {
-              return <li className={`${selectedIndex === index ? '__active': ''}`} onClick={this.select.bind(this, item)}>{itemBuilder(item)}</li>
+              return <li className={`${selectedIndex === index ? '__active': ''}`} onClick={this.select.bind(this, item)} tabindex="-1"  ref={(optionEl) => { this.elementReferences[index] = optionEl }}>{itemBuilder(item)}</li>
             })}
           </ul>
         </div>
